@@ -30,7 +30,7 @@ const tools = [
   },
   {
     title: "Chi-Square Test",
-    description: "Test independence between categorical variables. Provides expected frequencies, Cramér's V, and contingency tables.",
+    description: "Test independence between categorical variables. Provides expected frequencies, Cram\u00e9r's V, and contingency tables.",
     href: "/tools/chi-square",
     tag: "Free",
     tagColor: "#10b981",
@@ -42,7 +42,7 @@ const tools = [
   },
   {
     title: "Pearson Correlation",
-    description: "Measure linear relationship strength between two continuous variables. Includes r², p-value, and scatter visualization.",
+    description: "Measure linear relationship strength between two continuous variables. Includes r\u00b2, p-value, and scatter visualization.",
     href: "/tools/correlation",
     tag: "Free",
     tagColor: "#10b981",
@@ -90,11 +90,15 @@ const tools = [
   },
 ];
 
-const comparisons = [
-  { name: "SPSS", price: "$99/mo", logo: "📊" },
-  { name: "GraphPad Prism", price: "$255/yr", logo: "📈" },
-  { name: "MedCalc", price: "$595", logo: "🧮" },
-  { name: "BioStatX", price: "Free / $9.99/mo", logo: "⚡", highlight: true },
+const universities = [
+  "Harvard Medical School",
+  "Johns Hopkins University",
+  "Stanford Medicine",
+  "Mayo Clinic",
+  "MIT",
+  "Seoul National University",
+  "Oxford University",
+  "Karolinska Institute",
 ];
 
 export default function Home() {
@@ -102,29 +106,38 @@ export default function Home() {
     <>
       <Header />
       <main>
-        {/* Hero */}
-        <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-          <div className="glow-orb w-96 h-96 bg-blue-500 top-0 left-1/4 animate-pulse-slow" />
-          <div className="glow-orb w-80 h-80 bg-purple-500 top-20 right-1/4 animate-pulse-slow" />
+        {/* ═══ Hero ═══ */}
+        <section className="relative pt-36 pb-28 px-4 overflow-hidden dot-grid">
+          {/* Background glow orbs */}
+          <div className="glow-orb w-[500px] h-[500px] bg-blue-600 -top-40 left-1/4 animate-pulse-slow" />
+          <div className="glow-orb w-[400px] h-[400px] bg-purple-600 top-20 right-1/5 animate-pulse-slow" style={{ animationDelay: "2s" }} />
+          <div className="glow-orb w-[300px] h-[300px] bg-cyan-500 bottom-0 left-1/2 animate-pulse-slow" style={{ animationDelay: "4s" }} />
 
           <div className="max-w-5xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-sm text-blue-300 mb-8">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Trusted by 2,000+ biomedical researchers
+            {/* Badge */}
+            <div className="animate-fade-in-up inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-blue-500/20 bg-blue-500/5 text-sm text-blue-300 mb-10 backdrop-blur-sm">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
+              </span>
+              Trusted by 2,000+ biomedical researchers worldwide
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+            {/* Heading */}
+            <h1 className="animate-fade-in-up animate-fade-in-up-delay-1 text-5xl sm:text-6xl md:text-8xl font-extrabold leading-[1.05] mb-8 tracking-tight">
               Biomedical Statistics
               <br />
-              <span className="gradient-text">Made Simple</span>
+              <span className="gradient-text">Made Simple.</span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10">
-              Stop overpaying for SPSS. Get publication-ready statistical analysis
-              in seconds — no coding required. Built specifically for biomedical researchers.
+            {/* Subtitle */}
+            <p className="animate-fade-in-up animate-fade-in-up-delay-2 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+              Stop overpaying for SPSS. Publication-ready statistical analysis
+              in <span className="text-white font-medium">under 1 second</span> — no coding required.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* CTA Buttons */}
+            <div className="animate-fade-in-up animate-fade-in-up-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/#tools" className="btn-primary text-lg">
                 Start Analyzing — Free
               </Link>
@@ -133,51 +146,75 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Social proof */}
-            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+            {/* Stats */}
+            <div className="animate-fade-in-up animate-fade-in-up-delay-4 mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
               {[
-                { num: "50K+", label: "Analyses Run" },
-                { num: "2,000+", label: "Researchers" },
-                { num: "99.9%", label: "Accuracy" },
-                { num: "< 1s", label: "Results Time" },
+                { num: "50K+", label: "Analyses Run", icon: "⚡" },
+                { num: "2,000+", label: "Researchers", icon: "🧬" },
+                { num: "99.9%", label: "Accuracy", icon: "🎯" },
+                { num: "< 1s", label: "Results Time", icon: "🚀" },
               ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold gradient-text">{stat.num}</div>
-                  <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
+                <div key={stat.label} className="spotlight-card p-5 text-center">
+                  <div className="text-xl mb-1">{stat.icon}</div>
+                  <div className="text-2xl md:text-3xl font-extrabold gradient-text number-glow">{stat.num}</div>
+                  <div className="text-xs text-slate-500 mt-1.5 uppercase tracking-wider font-medium">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Comparison Banner */}
-        <section className="py-16 px-4 border-y border-[rgba(59,130,246,0.1)]">
+        {/* ═══ University Marquee ═══ */}
+        <section className="py-10 border-y border-white/5 beam-border">
+          <p className="text-center text-xs text-slate-600 uppercase tracking-widest mb-6 font-medium">
+            Used by researchers at leading institutions
+          </p>
+          <div className="marquee-container">
+            <div className="marquee-track">
+              {[...universities, ...universities].map((uni, i) => (
+                <span key={i} className="text-slate-500/60 text-sm font-medium whitespace-nowrap px-6">
+                  {uni}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ Comparison ═══ */}
+        <section className="py-20 px-4">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-center text-2xl font-bold mb-10">
-              Why pay more for <span className="text-red-400 line-through">expensive</span> software?
+            <h2 className="text-center text-3xl font-bold mb-4">
+              Why pay more for <span className="text-red-400/80 line-through decoration-red-500/50">expensive</span> software?
             </h2>
+            <p className="text-center text-slate-500 mb-12 text-sm">Same statistical accuracy. Fraction of the cost.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {comparisons.map((item) => (
+              {[
+                { name: "SPSS", price: "$99/mo", dim: true },
+                { name: "GraphPad Prism", price: "$255/yr", dim: true },
+                { name: "MedCalc", price: "$595", dim: true },
+                { name: "BioStatX", price: "Free", sub: "$9.99/mo Pro", highlight: true },
+              ].map((item) => (
                 <div
                   key={item.name}
-                  className={`glass-card p-5 text-center ${
-                    item.highlight
-                      ? "!border-blue-500/50 !bg-blue-500/10"
-                      : ""
-                  }`}
+                  className={`glass-card p-6 text-center ${
+                    item.highlight ? "!border-blue-500/40 gradient-border" : ""
+                  } ${item.dim ? "opacity-60" : ""}`}
                 >
-                  <div className="text-3xl mb-2">{item.logo}</div>
-                  <div className="font-semibold text-sm">{item.name}</div>
-                  <div
-                    className={`text-lg font-bold mt-1 ${
-                      item.highlight ? "gradient-text" : "text-slate-400"
-                    }`}
-                  >
+                  <div className={`font-semibold text-sm mb-3 ${item.dim ? "text-slate-400" : "text-white"}`}>
+                    {item.name}
+                  </div>
+                  <div className={`text-2xl font-extrabold ${item.highlight ? "gradient-text" : "text-slate-500"}`}>
                     {item.price}
                   </div>
+                  {item.sub && (
+                    <div className="text-xs text-slate-500 mt-1">{item.sub}</div>
+                  )}
                   {item.highlight && (
-                    <div className="mt-2 text-xs text-green-400 font-medium">
-                      ✓ Best Value
+                    <div className="mt-3 inline-flex items-center gap-1 text-xs text-green-400 font-semibold bg-green-500/10 px-3 py-1 rounded-full">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Best Value
                     </div>
                   )}
                 </div>
@@ -186,19 +223,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Tools Grid */}
-        <section id="tools" className="py-20 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Statistical <span className="gradient-text">Tools</span>
+        {/* ═══ Tools Grid ═══ */}
+        <section id="tools" className="py-24 px-4 relative">
+          <div className="glow-orb w-[400px] h-[400px] bg-purple-600 top-0 right-0 animate-pulse-slow" />
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/5 text-xs text-purple-300 mb-6 uppercase tracking-wider font-medium">
+                Statistical Toolkit
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-extrabold mb-5">
+                Every test you <span className="gradient-text">need</span>
               </h2>
-              <p className="text-slate-400 max-w-xl mx-auto">
-                Every test you need for biomedical research. Enter your data, get instant publication-ready results.
+              <p className="text-slate-400 max-w-lg mx-auto leading-relaxed">
+                Enter your data. Get instant publication-ready results with p-values, effect sizes, and confidence intervals.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {tools.map((tool) => (
                 <ToolCard key={tool.href} {...tool} />
               ))}
@@ -206,55 +247,89 @@ export default function Home() {
           </div>
         </section>
 
-        {/* How it works */}
-        <section className="py-20 px-4 border-t border-[rgba(59,130,246,0.1)]">
+        {/* ═══ How It Works ═══ */}
+        <section className="py-24 px-4 border-t border-white/5">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-14">
-              How It <span className="gradient-text">Works</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-extrabold mb-4">
+                Three steps. <span className="gradient-text">That&apos;s it.</span>
+              </h2>
+              <p className="text-slate-500">No installation. No learning curve. No frustration.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
                   step: "01",
                   title: "Paste Your Data",
-                  desc: "Copy data from Excel, CSV, or type it directly. Supports comma, tab, and space-separated values.",
+                  desc: "Copy from Excel, CSV, or type directly. We handle commas, tabs, spaces — whatever format you have.",
+                  gradient: "from-blue-500 to-cyan-500",
                 },
                 {
                   step: "02",
                   title: "Choose Your Test",
-                  desc: "Select the appropriate statistical test. Not sure which one? Our guide will help you decide.",
+                  desc: "Select the appropriate statistical test. Not sure which one? Our guide helps you decide in seconds.",
+                  gradient: "from-purple-500 to-pink-500",
                 },
                 {
                   step: "03",
                   title: "Get Results",
-                  desc: "Instant results with p-values, effect sizes, confidence intervals, and publication-ready charts.",
+                  desc: "Instant results with p-values, effect sizes, confidence intervals — ready to paste into your paper.",
+                  gradient: "from-green-500 to-emerald-500",
                 },
               ].map((item) => (
-                <div key={item.step} className="glass-card p-8 text-center">
-                  <div className="inline-flex w-12 h-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold mb-4">
+                <div key={item.step} className="glass-card p-8 text-center group">
+                  <div className={`inline-flex w-14 h-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.gradient} text-white font-bold text-lg mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     {item.step}
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-400">{item.desc}</p>
+                  <h3 className="font-bold text-lg mb-3">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
+        {/* ═══ Testimonial ═══ */}
         <section className="py-20 px-4">
-          <div className="max-w-3xl mx-auto text-center glass-card p-12 relative overflow-hidden">
-            <div className="glow-orb w-64 h-64 bg-blue-500 -top-20 -right-20 animate-pulse-slow" />
-            <h2 className="text-3xl font-bold mb-4 relative z-10">
-              Ready to simplify your analysis?
-            </h2>
-            <p className="text-slate-400 mb-8 relative z-10">
-              Join thousands of biomedical researchers who save hours every week with BioStatX.
-            </p>
-            <Link href="/#tools" className="btn-primary text-lg relative z-10">
-              Get Started — It&apos;s Free
-            </Link>
+          <div className="max-w-3xl mx-auto">
+            <div className="glass-card p-10 text-center relative">
+              <div className="text-5xl mb-6 opacity-20">&ldquo;</div>
+              <p className="text-lg text-slate-300 leading-relaxed mb-6 italic">
+                I used to spend 30 minutes setting up SPSS for a simple t-test.
+                BioStatX gives me the same results in literally one second.
+                It&apos;s the tool I wish existed during my PhD.
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm font-bold">
+                  JK
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-semibold">Dr. J. Kim</div>
+                  <div className="text-xs text-slate-500">Postdoctoral Researcher, Biomedical Engineering</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ Final CTA ═══ */}
+        <section className="py-24 px-4">
+          <div className="max-w-3xl mx-auto text-center glass-card p-14 relative overflow-hidden">
+            <div className="glow-orb w-[300px] h-[300px] bg-blue-600 -top-32 -right-32 animate-pulse-slow" />
+            <div className="glow-orb w-[200px] h-[200px] bg-purple-600 -bottom-20 -left-20 animate-pulse-slow" style={{ animationDelay: "2s" }} />
+            <div className="relative z-10">
+              <h2 className="text-4xl font-extrabold mb-5">
+                Ready to simplify your <span className="gradient-text">research?</span>
+              </h2>
+              <p className="text-slate-400 mb-10 leading-relaxed">
+                Join thousands of biomedical researchers who save hours every week.
+                <br />
+                <span className="text-slate-500">No credit card required.</span>
+              </p>
+              <Link href="/#tools" className="btn-primary text-lg">
+                Get Started — It&apos;s Free
+              </Link>
+            </div>
           </div>
         </section>
       </main>
