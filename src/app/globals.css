@@ -343,6 +343,67 @@ textarea.input-field {
   padding: 16px;
 }
 
+/* ─── SAS-inspired: Impact Card ─── */
+.impact-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.impact-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-warm), var(--accent-amber));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.impact-card:hover {
+  border-color: rgba(194, 65, 12, 0.2);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 0 0 1px rgba(194, 65, 12, 0.05);
+  transform: translateY(-6px);
+}
+
+.impact-card:hover::before { opacity: 1; }
+
+/* ─── SAS-inspired: Metric highlight ─── */
+.metric-highlight {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-warm), var(--accent-amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── SAS-inspired: Quote accent ─── */
+.quote-accent {
+  border-left: 3px solid var(--accent-primary);
+  padding-left: 20px;
+}
+
+/* ─── SAS-inspired: Capability tab panel ─── */
+.tab-panel {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0 16px 16px 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+/* ─── SAS-inspired: Hover scale on buttons ─── */
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(194, 65, 12, 0.25), 0 0 60px rgba(234, 88, 12, 0.1);
+  transform: translateY(-2px) scale(1.02);
+}
+
 /* ─── Scroll ─── */
 html { scroll-behavior: smooth; }
 
