@@ -3,6 +3,7 @@
 import { useState } from "react";
 import StatToolLayout from "@/components/StatToolLayout";
 import { oneWayAnova, parseData, formatNumber } from "@/lib/statistics";
+import { AnovaChart, DotPlotChart } from "@/components/Charts";
 
 export default function AnovaPage() {
   const [groupTexts, setGroupTexts] = useState([
@@ -107,6 +108,19 @@ export default function AnovaPage() {
                   <div className="text-xl font-bold text-purple-400">{formatNumber(result.etaSquared)}</div>
                 </div>
               </div>
+            </div>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <AnovaChart
+                groupMeans={result.groupMeans}
+                groupStds={result.groupStds}
+                groupNs={result.groupNs}
+              />
+              <DotPlotChart
+                groups={groupTexts.map((t, i) => ({ name: `Group ${i + 1}`, values: parseData(t) }))}
+                title="Individual Data Points"
+              />
             </div>
 
             {/* ANOVA Table */}

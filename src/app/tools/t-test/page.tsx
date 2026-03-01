@@ -3,6 +3,7 @@
 import { useState } from "react";
 import StatToolLayout from "@/components/StatToolLayout";
 import { independentTTest, parseData, formatNumber } from "@/lib/statistics";
+import { GroupComparisonChart, DotPlotChart } from "@/components/Charts";
 
 export default function TTestPage() {
   const [group1Text, setGroup1Text] = useState("23.1 25.4 22.8 24.5 26.1 23.9 25.0 24.3");
@@ -96,6 +97,24 @@ export default function TTestPage() {
                   <div className="text-xl font-bold text-purple-400">{formatNumber(result.effectSize)}</div>
                 </div>
               </div>
+            </div>
+
+            {/* Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <GroupComparisonChart
+                data={[
+                  { name: "Group 1", mean: parseFloat(result.meanGroup1.toFixed(4)), sem: parseFloat(result.semGroup1.toFixed(4)), color: "#3b82f6" },
+                  { name: "Group 2", mean: parseFloat(result.meanGroup2.toFixed(4)), sem: parseFloat(result.semGroup2.toFixed(4)), color: "#8b5cf6" },
+                ]}
+                title="Mean Comparison"
+              />
+              <DotPlotChart
+                groups={[
+                  { name: "Group 1", values: parseData(group1Text) },
+                  { name: "Group 2", values: parseData(group2Text) },
+                ]}
+                title="Individual Data Points"
+              />
             </div>
 
             {/* Group Statistics */}

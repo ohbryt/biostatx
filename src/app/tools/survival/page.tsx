@@ -4,6 +4,7 @@ import { useState } from "react";
 import StatToolLayout from "@/components/StatToolLayout";
 import { kaplanMeier, formatNumber } from "@/lib/statistics";
 import type { KaplanMeierResult } from "@/lib/statistics";
+import { SurvivalCurveChart } from "@/components/Charts";
 
 export default function SurvivalPage() {
   const [dataText, setDataText] = useState(
@@ -87,51 +88,11 @@ export default function SurvivalPage() {
               </div>
             </div>
 
-            {/* ASCII Survival Curve */}
-            <div className="glass-card p-6">
-              <h3 className="font-semibold mb-4">Survival Curve</h3>
-              <div className="bg-[rgba(10,15,28,0.8)] rounded-lg p-4 overflow-x-auto">
-                <div className="relative h-48 w-full min-w-[400px]">
-                  <svg viewBox="0 0 500 200" className="w-full h-full">
-                    {/* Grid lines */}
-                    {[0, 0.25, 0.5, 0.75, 1.0].map((v) => (
-                      <g key={v}>
-                        <line x1="50" y1={180 - v * 160} x2="480" y2={180 - v * 160} stroke="rgba(148,163,184,0.1)" strokeWidth="1" />
-                        <text x="40" y={184 - v * 160} fill="#64748b" fontSize="10" textAnchor="end">{(v * 100).toFixed(0)}%</text>
-                      </g>
-                    ))}
-                    {/* Y axis label */}
-                    <text x="12" y="100" fill="#94a3b8" fontSize="10" textAnchor="middle" transform="rotate(-90, 12, 100)">Survival</text>
-                    {/* X axis label */}
-                    <text x="265" y="198" fill="#94a3b8" fontSize="10" textAnchor="middle">Time</text>
-                    {/* Survival step curve */}
-                    <polyline
-                      fill="none"
-                      stroke="#3b82f6"
-                      strokeWidth="2"
-                      points={[
-                        `50,${180 - 1.0 * 160}`,
-                        ...result.curve.map((pt) => {
-                          const maxTime = result.curve[result.curve.length - 1].time;
-                          const x = 50 + (pt.time / maxTime) * 430;
-                          const y = 180 - pt.survival * 160;
-                          return `${x},${y}`;
-                        }),
-                      ].join(" ")}
-                    />
-                    {/* Median line */}
-                    {result.medianSurvival !== null && (
-                      <>
-                        <line x1="50" y1={180 - 0.5 * 160} x2="480" y2={180 - 0.5 * 160} stroke="#f59e0b" strokeWidth="1" strokeDasharray="4,4" />
-                        <text x={50 + (result.medianSurvival / result.curve[result.curve.length - 1].time) * 430} y={180 - 0.5 * 160 - 6} fill="#f59e0b" fontSize="9" textAnchor="middle">
-                          Median: {formatNumber(result.medianSurvival, 1)}
-                        </text>
-                      </>
-                    )}
-                  </svg>
-                </div>
-              </div>
-            </div>
+            {/* Kaplan-Meier Curve (Recharts) */}
+            <SurvivalCurveChart
+              curve={result.curve.map((pt) => ({ time: pt.time, survival: pt.survival }))}
+              medianSurvival={result.medianSurvival}
+            />
 
             {/* Life Table */}
             <div className="glass-card p-6">

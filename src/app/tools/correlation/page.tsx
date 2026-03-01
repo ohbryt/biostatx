@@ -3,6 +3,7 @@
 import { useState } from "react";
 import StatToolLayout from "@/components/StatToolLayout";
 import { pearsonCorrelation, parseData, formatNumber } from "@/lib/statistics";
+import { CorrelationScatterChart } from "@/components/Charts";
 
 export default function CorrelationPage() {
   const [xText, setXText] = useState("1.2 2.4 3.1 4.5 5.2 6.8 7.3 8.1 9.0 10.2");
@@ -69,6 +70,14 @@ export default function CorrelationPage() {
                 </div>
               </div>
             </div>
+
+            {/* Scatter Plot */}
+            <CorrelationScatterChart
+              x={parseData(xText)}
+              y={parseData(yText)}
+              r={result.r}
+              rSquared={result.rSquared}
+            />
 
             <div className="glass-card p-6 border-l-4 border-blue-500">
               <h3 className="font-semibold mb-2">📝 Interpretation</h3>
