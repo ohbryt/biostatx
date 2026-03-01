@@ -15,7 +15,7 @@ export default function ToolCard({ title, description, href, icon, tag, tagColor
       <div className="glass-card p-7 h-full flex flex-col">
         {/* Top row */}
         <div className="flex items-start justify-between mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-white/5 flex items-center justify-center text-blue-400 group-hover:from-blue-500/20 group-hover:to-purple-500/20 group-hover:scale-110 transition-all duration-300">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-200/30 flex items-center justify-center text-orange-600 group-hover:from-orange-500/20 group-hover:to-amber-500/20 group-hover:scale-110 transition-all duration-300">
             {icon}
           </div>
           <span
@@ -27,15 +27,15 @@ export default function ToolCard({ title, description, href, icon, tag, tagColor
         </div>
 
         {/* Content */}
-        <h3 className="font-bold text-[17px] mb-2.5 group-hover:text-blue-300 transition-colors duration-300">
+        <h3 className="font-bold text-[17px] mb-2.5 text-stone-800 group-hover:text-orange-600 transition-colors duration-300">
           {title}
         </h3>
-        <p className="text-sm text-slate-500 flex-grow leading-relaxed">
+        <p className="text-sm text-stone-500 flex-grow leading-relaxed">
           {description}
         </p>
 
         {/* Arrow link */}
-        <div className="mt-5 flex items-center gap-2 text-blue-400/70 text-sm font-medium group-hover:text-blue-300 transition-all duration-300">
+        <div className="mt-5 flex items-center gap-2 text-orange-500/70 text-sm font-medium group-hover:text-orange-600 transition-all duration-300">
           <span>Try now</span>
           <svg
             className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300"

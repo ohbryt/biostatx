@@ -57,7 +57,7 @@ export function GroupComparisonChart({
     <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold">{title}</h3>
-        <span className="text-xs text-slate-500">Publication-ready</span>
+        <span className="text-xs text-stone-500">Publication-ready</span>
       </div>
       <div className="bg-[rgba(10,15,28,0.6)] rounded-xl p-4">
         <ResponsiveContainer width="100%" height={320}>
@@ -86,7 +86,7 @@ export function GroupComparisonChart({
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-[10px] text-slate-600 mt-2 text-center">Error bars represent ± 1 SEM</p>
+      <p className="text-[10px] text-stone-500 mt-2 text-center">Error bars represent ± 1 SEM</p>
     </div>
   );
 }
@@ -218,7 +218,7 @@ export function CorrelationScatterChart({ x, y, r, rSquared }: ScatterData) {
           </ScatterChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-[10px] text-slate-600 mt-2 text-center">
+      <p className="text-[10px] text-stone-500 mt-2 text-center">
         y = {slope.toFixed(3)}x {intercept >= 0 ? "+" : ""} {intercept.toFixed(3)} &nbsp;|&nbsp; Dashed line = linear regression
       </p>
     </div>
