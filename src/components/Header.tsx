@@ -26,6 +26,9 @@ export default function Header() {
             <Link href="/tools/bioplot" className="text-sm text-orange-600 font-medium hover:text-orange-700 transition-colors">
               BioPlot
             </Link>
+            <Link href="/tools/curve-fitting" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
+              Curve Fit
+            </Link>
             <Link href="/examples" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
               Examples
             </Link>
@@ -55,6 +58,7 @@ export default function Header() {
           <div className="md:hidden pb-4 space-y-2">
             <Link href="/#tools" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Tools</Link>
             <Link href="/tools/bioplot" className="block py-2 text-orange-600 font-medium hover:text-orange-700" onClick={() => setMenuOpen(false)}>BioPlot</Link>
+            <Link href="/tools/curve-fitting" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Curve Fit</Link>
             <Link href="/examples" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Examples</Link>
             <Link href="/pricing" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Pricing</Link>
             <Link href="/pricing" className="btn-primary text-sm !py-2 !px-5 inline-block mt-2" onClick={() => setMenuOpen(false)}>Get Started Free</Link>
