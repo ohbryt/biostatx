@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, profile, loading } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[rgba(250,248,245,0.85)] border-b border-stone-200/60">
@@ -35,9 +37,36 @@ export default function Header() {
             <Link href="/pricing" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
               Pricing
             </Link>
-            <Link href="/pricing" className="btn-primary text-sm !py-2 !px-5">
-              Get Started Free
-            </Link>
+
+            {/* Auth buttons */}
+            {loading ? (
+              <div className="w-20 h-8 bg-stone-100 rounded-lg animate-pulse" />
+            ) : user ? (
+              <Link href="/dashboard" className="flex items-center gap-2 text-sm font-medium text-stone-700 hover:text-orange-600 transition-colors">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                  {(profile?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+                </div>
+                <span className="hidden lg:inline">
+                  {profile?.full_name || user.email?.split("@")[0]}
+                </span>
+                {profile?.plan && profile.plan !== "free" && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold uppercase ${
+                    profile.plan === "team" ? "bg-purple-100 text-purple-700" : "bg-orange-100 text-orange-700"
+                  }`}>
+                    {profile.plan}
+                  </span>
+                )}
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link href="/auth/login" className="text-sm text-stone-600 hover:text-stone-900 transition-colors font-medium">
+                  Sign In
+                </Link>
+                <Link href="/auth/signup" className="btn-primary text-sm !py-2 !px-5">
+                  Get Started Free
+                </Link>
+              </div>
+            )}
           </nav>
 
           <button
@@ -61,7 +90,21 @@ export default function Header() {
             <Link href="/tools/curve-fitting" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Curve Fit</Link>
             <Link href="/examples" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Examples</Link>
             <Link href="/pricing" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Pricing</Link>
-            <Link href="/pricing" className="btn-primary text-sm !py-2 !px-5 inline-block mt-2" onClick={() => setMenuOpen(false)}>Get Started Free</Link>
+            <div className="border-t border-stone-200 pt-3 mt-2">
+              {user ? (
+                <Link href="/dashboard" className="flex items-center gap-2 py-2 text-stone-700 font-medium" onClick={() => setMenuOpen(false)}>
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                    {(profile?.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+                  </div>
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/auth/login" className="block py-2 text-stone-600 hover:text-stone-900 font-medium" onClick={() => setMenuOpen(false)}>Sign In</Link>
+                  <Link href="/auth/signup" className="btn-primary text-sm !py-2 !px-5 inline-block mt-2" onClick={() => setMenuOpen(false)}>Get Started Free</Link>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>

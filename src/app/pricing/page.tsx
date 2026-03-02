@@ -1,12 +1,19 @@
+"use client";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import * as PortOne from "@portone/browser-sdk/v2";
 
 const plans = [
   {
     name: "Free",
-    price: "$0",
+    price: "₩0",
+    priceUSD: "$0",
     period: "forever",
+    amountKRW: 0,
     description: "Perfect for students and occasional use",
     features: [
       "T-Test (Independent & Paired)",
@@ -19,48 +26,49 @@ const plans = [
       "Community support",
     ],
     cta: "Start Free",
-    href: "/#tools",
+    planKey: "free" as const,
     highlight: false,
   },
   {
     name: "Pro",
-    price: "$9.99",
+    price: "₩12,900",
+    priceUSD: "$9.99",
     period: "/month",
+    amountKRW: 12900,
     description: "For active researchers and labs",
     features: [
       "Everything in Free, plus:",
       "Kaplan-Meier Survival Analysis",
-      "Logistic Regression",
-      "ROC Curve Analysis",
+      "Logistic Regression & ROC Curve",
       "Multiple Comparisons (Tukey, Bonferroni)",
       "Publication-ready charts (PNG/SVG)",
+      "Curve Fitting (9 models)",
       "AI-powered interpretation",
       "Data history & saved analyses",
       "Priority email support",
-      "CSV/Excel import",
     ],
-    cta: "Start 14-Day Free Trial",
-    href: "#",
+    cta: "Subscribe Pro",
+    planKey: "pro" as const,
     highlight: true,
   },
   {
     name: "Team",
-    price: "$29.99",
+    price: "₩39,900",
+    priceUSD: "$29.99",
     period: "/month",
+    amountKRW: 39900,
     description: "For research labs and institutions",
     features: [
       "Everything in Pro, plus:",
       "Up to 10 team members",
       "Shared analysis workspace",
-      "Custom branding",
-      "API access",
+      "Custom branding & API access",
       "Batch analysis",
-      "Dedicated support",
-      "SSO / institutional login",
+      "Dedicated support & SSO",
       "Data compliance (HIPAA-ready)",
     ],
-    cta: "Contact Sales",
-    href: "#",
+    cta: "Subscribe Team",
+    planKey: "team" as const,
     highlight: false,
   },
 ];
@@ -86,87 +94,182 @@ const faqs = [
     q: "Can I cancel my subscription anytime?",
     a: "Yes. You can cancel your Pro or Team subscription at any time. You'll continue to have access until the end of your billing period.",
   },
+  {
+    q: "What payment methods are accepted?",
+    a: "We accept all major Korean payment methods including credit/debit cards, bank transfer, and KakaoPay through our secure payment partner PortOne.",
+  },
 ];
 
 export default function PricingPage() {
+  const { user, profile } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleCheckout = async (planKey: string, amountKRW: number, planName: string) => {
+    if (!user) {
+      window.location.href = "/auth/signup";
+      return;
+    }
+
+    if (planKey === "free") {
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    setLoadingPlan(planKey);
+    try {
+      const paymentId = `payment-${crypto.randomUUID()}`;
+
+      const response = await PortOne.requestPayment({
+        storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID || "",
+        channelKey: process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY || "",
+        paymentId,
+        orderName: `BioStatX ${planName} Plan (Monthly)`,
+        totalAmount: amountKRW,
+        currency: "CURRENCY_KRW",
+        payMethod: "CARD",
+        customData: {
+          userId: user.id,
+          planKey,
+        },
+        redirectUrl: `${window.location.origin}/dashboard?checkout=success&planKey=${planKey}&paymentId=${paymentId}`,
+      });
+
+      if (response && response.code !== undefined) {
+        // Payment failed or cancelled
+        if (response.code === "FAILURE_TYPE_PG") {
+          alert("결제가 실패했습니다. 다시 시도해 주세요.");
+        }
+        // User cancelled — do nothing
+      } else {
+        // Payment succeeded on PC (non-redirect)
+        const verifyRes = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentId, userId: user.id, planKey }),
+        });
+        const verifyData = await verifyRes.json();
+        if (verifyData.success) {
+          window.location.href = "/dashboard?checkout=success";
+        } else {
+          alert("결제 확인에 실패했습니다. 고객지원에 문의해 주세요.");
+        }
+      }
+    } catch {
+      alert("결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  const isCurrentPlan = (planKey: string) => {
+    if (!user) return false;
+    return profile?.plan === planKey || (!profile?.plan && planKey === "free");
+  };
+
+  const getButtonLabel = (plan: typeof plans[0]) => {
+    if (loadingPlan === plan.planKey) return "처리 중...";
+    if (isCurrentPlan(plan.planKey)) return "Current Plan";
+    return plan.cta;
+  };
+
   return (
     <>
       <Header />
       <main className="pt-28 pb-10 px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
+            <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-stone-800">
               Simple, <span className="gradient-text">Honest</span> Pricing
             </h1>
-            <p className="text-lg text-slate-400 max-w-xl mx-auto">
+            <p className="text-lg text-stone-500 max-w-xl mx-auto">
               No hidden fees. No per-analysis charges. Start free, upgrade when you need more.
             </p>
           </div>
 
-          {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
             {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={`glass-card p-8 flex flex-col ${
-                  plan.highlight
-                    ? "!border-blue-500/50 relative"
-                    : ""
+                  plan.highlight ? "!border-orange-400/50 relative ring-2 ring-orange-200" : ""
                 }`}
               >
                 {plan.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-xs font-bold">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-xs font-bold text-white">
                     Most Popular
                   </div>
                 )}
-                <h3 className="text-xl font-bold">{plan.name}</h3>
+                <h3 className="text-xl font-bold text-stone-800">{plan.name}</h3>
                 <div className="mt-3 mb-2">
-                  <span className="text-4xl font-extrabold">{plan.price}</span>
-                  <span className="text-slate-500 text-sm">{plan.period}</span>
+                  <span className="text-4xl font-extrabold text-stone-900">{plan.price}</span>
+                  <span className="text-stone-500 text-sm">{plan.period}</span>
                 </div>
-                <p className="text-sm text-slate-400 mb-6">{plan.description}</p>
+                <p className="text-xs text-stone-400 mb-1">{plan.priceUSD} USD equivalent</p>
+                <p className="text-sm text-stone-500 mb-6">{plan.description}</p>
 
                 <ul className="space-y-3 mb-8 flex-grow">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="text-green-400 mt-0.5 shrink-0">✓</span>
-                      <span className="text-slate-300">{feature}</span>
+                      <span className="text-green-600 mt-0.5 shrink-0">✓</span>
+                      <span className="text-stone-600">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
-                <Link
-                  href={plan.href}
-                  className={`text-center ${plan.highlight ? "btn-primary" : "btn-secondary"}`}
-                >
-                  {plan.cta}
-                </Link>
+                {isCurrentPlan(plan.planKey) ? (
+                  <div className="text-center py-3 rounded-xl bg-stone-100 text-stone-500 font-medium text-sm">
+                    Current Plan
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleCheckout(plan.planKey, plan.amountKRW, plan.name)}
+                    disabled={!!loadingPlan}
+                    className={`text-center w-full ${plan.highlight ? "btn-primary" : "btn-secondary"} disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {getButtonLabel(plan)}
+                  </button>
+                )}
               </div>
             ))}
           </div>
 
+          {/* Payment Methods */}
+          <div className="text-center mb-16">
+            <p className="text-sm text-stone-400 mb-3">Secure payments powered by</p>
+            <div className="flex items-center justify-center gap-4 text-stone-500">
+              <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-stone-100">💳 Credit Card</span>
+              <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-stone-100">🏦 Bank Transfer</span>
+              <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-stone-100">📱 KakaoPay</span>
+              <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-stone-100">🔒 PortOne</span>
+            </div>
+          </div>
+
           {/* FAQ */}
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-10">
+            <h2 className="text-3xl font-bold text-center mb-10 text-stone-800">
               Frequently Asked <span className="gradient-text">Questions</span>
             </h2>
             <div className="space-y-4">
               {faqs.map((faq, i) => (
                 <div key={i} className="glass-card p-6">
-                  <h3 className="font-semibold mb-2">{faq.q}</h3>
-                  <p className="text-sm text-slate-400">{faq.a}</p>
+                  <h3 className="font-semibold mb-2 text-stone-800">{faq.q}</h3>
+                  <p className="text-sm text-stone-500">{faq.a}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* CTA */}
           <div className="text-center mt-16">
-            <h2 className="text-2xl font-bold mb-4">Ready to simplify your research?</h2>
-            <Link href="/#tools" className="btn-primary text-lg">
-              Start Analyzing — Free
-            </Link>
+            <h2 className="text-2xl font-bold mb-4 text-stone-800">Ready to simplify your research?</h2>
+            {user ? (
+              <Link href="/dashboard" className="btn-primary text-lg">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link href="/auth/signup" className="btn-primary text-lg">
+                Create Free Account
+              </Link>
+            )}
           </div>
         </div>
       </main>
