@@ -75,7 +75,7 @@ export default function CurveFittingPage() {
   const [result, setResult] = useState<FitResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [config, setConfig] = useState<ChartStyleConfig>(defaultChartConfig);
-  const [showCustomize, setShowCustomize] = useState(false);
+  const [showCustomize, setShowCustomize] = useState(true);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const runFit = useCallback(() => {
@@ -136,15 +136,15 @@ export default function CurveFittingPage() {
             🔬 Fit Curve
           </button>
         </div>
-        <p className="text-xs text-stone-400 mt-2">
-          <strong>Equation:</strong> <code className="bg-stone-100 px-1.5 py-0.5 rounded text-orange-700">{m.equation}</code>
+        <p className="text-sm text-stone-600 mt-2">
+          <strong className="text-stone-800">Equation:</strong> <code className="bg-stone-100 px-1.5 py-0.5 rounded text-orange-700">{m.equation}</code>
           &nbsp;|&nbsp; Parameters: {m.paramNames.join(", ")}
         </p>
       </div>
 
       {/* Example datasets */}
       <div className="flex flex-wrap gap-2 mb-4">
-        <span className="text-xs text-stone-400 py-1">Examples:</span>
+        <span className="text-xs text-stone-600 font-medium py-1">Examples:</span>
         {Object.entries(examples).map(([key, ex]) => (
           <button key={key} onClick={() => loadExample(key)}
             className="text-xs px-3 py-1.5 rounded-lg border border-stone-200 text-stone-500 hover:border-orange-300 hover:text-orange-600 transition">
@@ -157,7 +157,7 @@ export default function CurveFittingPage() {
       <div className="flex flex-col lg:flex-row gap-4 mb-4">
         <div className="flex-1 min-w-0" ref={chartRef}>
           <div className="rounded-xl p-4" style={{ background: config.bgColor }}>
-            <h4 className="font-semibold text-slate-200 mb-2 text-center" style={{ fontSize: config.fontSize + 4 }}>
+            <h4 className="font-semibold mb-2 text-center" style={{ fontSize: config.fontSize + 4, color: config.axisColor }}>
               {m.name}
             </h4>
             <ResponsiveContainer width="100%" height={380}>
@@ -253,7 +253,7 @@ export default function CurveFittingPage() {
             </table>
           </div>
 
-          <p className="text-[10px] text-stone-400 mt-3">
+          <p className="text-xs text-stone-600 mt-3">
             Levenberg-Marquardt optimization | {result.iterations} iterations | AIC: {result.aic.toFixed(2)}
           </p>
         </div>

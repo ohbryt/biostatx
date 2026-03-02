@@ -172,7 +172,7 @@ export default function BioPlotPage() {
   const [activeTab, setActiveTab] = useState<TabId>("volcano");
   const [config, setConfig] = useState<ChartStyleConfig>(defaultChartConfig);
   const [sheetData, setSheetData] = useState<Record<string, string>[]>(getDefaultRows("volcano"));
-  const [showCustomize, setShowCustomize] = useState(false);
+  const [showCustomize, setShowCustomize] = useState(true);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const switchTab = useCallback((tab: TabId) => {
@@ -235,8 +235,8 @@ export default function BioPlotPage() {
       </div>
 
       {/* Info */}
-      <p className="text-xs text-stone-500 mb-4 glass-card p-3">
-        📄 <strong>Based on PlotGDP</strong> (bioRxiv 2026.01.31.702995v3) — {plotInfo[activeTab]}
+      <p className="text-sm text-stone-700 mb-4 glass-card p-3">
+        📄 <strong className="text-stone-800">Based on PlotGDP</strong> (bioRxiv 2026.01.31.702995v3) — {plotInfo[activeTab]}
       </p>
 
       {/* Chart + Customize: responsive layout */}
@@ -265,8 +265,8 @@ export default function BioPlotPage() {
 
       {/* Interpretation footer */}
       <div className="glass-card p-4">
-        <p className="text-xs text-stone-500 leading-relaxed">
-          <strong className="text-stone-700">💡 Tips:</strong>{" "}
+        <p className="text-sm text-stone-700 leading-relaxed">
+          <strong className="text-stone-900">💡 Tips:</strong>{" "}
           Paste data from Excel/Sheets directly into the table above. Use the customize panel to change colors, fonts, and download publication-ready figures.
           All charts are responsive and auto-scale to your screen size.
         </p>
