@@ -14,28 +14,49 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("비밀번호가 일치하지 않습니다.");
       return;
     }
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError("비밀번호는 최소 6자 이상이어야 합니다.");
       return;
     }
 
     setLoading(true);
-    const { error: signUpError } = await signUp(email, password, fullName);
-    if (signUpError) {
-      setError(signUpError);
-      setLoading(false);
-    } else {
-      setSuccess(true);
+    try {
+      // Use server-side API to create user with auto email confirmation
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, fullName }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "회원가입에 실패했습니다.");
+        setLoading(false);
+        return;
+      }
+
+      // Auto sign-in after successful signup
+      const { error: signInError } = await signIn(email, password);
+      if (signInError) {
+        // Sign-in failed but account was created — show success and redirect to login
+        setSuccess(true);
+      } else {
+        // Signed in successfully — go to dashboard
+        window.location.href = "/dashboard";
+      }
+    } catch {
+      setError("네트워크 오류. 다시 시도해 주세요.");
+    } finally {
       setLoading(false);
     }
   };
@@ -58,13 +79,13 @@ export default function SignUpPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold text-stone-800 mb-2">Check Your Email</h2>
+                <h2 className="text-xl font-bold text-stone-800 mb-2">계정이 생성되었습니다!</h2>
                 <p className="text-stone-500 text-sm mb-6">
-                  We sent a confirmation link to <strong className="text-stone-700">{email}</strong>.
-                  Please click the link to activate your account.
+                  <strong className="text-stone-700">{email}</strong> 계정이 성공적으로 생성되었습니다.
+                  로그인하여 BioStatX를 시작하세요.
                 </p>
                 <Link href="/auth/login" className="btn-primary text-sm">
-                  Go to Sign In
+                  로그인하기
                 </Link>
               </div>
             ) : (
