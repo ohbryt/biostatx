@@ -79,7 +79,7 @@ const capabilities = [
 /* ═══ SAS-inspired: Customer Impact Data ═══ */
 const impacts = [
   { metric: "30min → 1s", label: "Analysis Time", desc: "Researchers save an average of 30 minutes per statistical test compared to desktop software setup.", initials: "JK", name: "Dr. J. Kim", role: "Postdoc, Biomedical Engineering" },
-  { metric: "90%", label: "Cost Savings", desc: "BioStatX Free tier covers most needs. Pro at $9.99/mo vs. SPSS at $99/mo — a 90% cost reduction.", initials: "SL", name: "Dr. S. Lee", role: "Assistant Professor, Pharmacology" },
+  { metric: "90%", label: "Cost Savings", desc: "BioStatX Free는 대부분의 분석을 무료로 제공. Pro ₩12,900/월 vs SPSS ₩130,000/월 — 90% 비용 절감.", initials: "SL", name: "Dr. S. Lee", role: "Assistant Professor, Pharmacology" },
   { metric: "4.6×", label: "Faster Workflow", desc: "From data entry to publication-ready results in one platform. No switching between Excel, SPSS, and GraphPad.", initials: "MP", name: "Dr. M. Park", role: "Clinical Research Coordinator" },
 ];
 
@@ -88,7 +88,7 @@ const faqs = [
   { q: "How accurate are the results compared to SPSS or Prism?", a: "BioStatX uses the same mathematical algorithms (Welch's t-test, Levenberg-Marquardt, etc.) as desktop software. Our statistics engine is validated against published datasets with 99.9% accuracy." },
   { q: "Can I use BioStatX results in my publication?", a: "Absolutely. All results include p-values, effect sizes, confidence intervals, and test statistics in formats ready for scientific papers. Charts export as high-resolution PNG (2x retina) or vector SVG." },
   { q: "Is my data secure?", a: "All computations run entirely in your browser — your data never leaves your device. We don't store, transmit, or access any research data. Zero server-side processing." },
-  { q: "What's the difference between Free and Pro?", a: "Free includes all 8 statistical tests (including RT-PCR ΔΔCt) and BioPlot with full customization. Pro adds advanced curve fitting models, priority support, batch analysis, and API access for $9.99/month." },
+  { q: "Free와 Pro의 차이점은?", a: "Free는 8개 통계 테스트(RT-PCR ΔΔCt 포함)와 BioPlot을 제공합니다. Pro(₩12,900/월)는 고급 커브 피팅 9모델, AI Figure Generator, SVG 내보내기, 분석 저장, 우선 지원을 추가합니다." },
   { q: "Do I need to install anything?", a: "No. BioStatX runs entirely in your web browser. No downloads, no Java, no Python environments. Works on any device — desktop, tablet, or mobile." },
 ];
 
@@ -247,10 +247,10 @@ export default function Home() {
             <p className="text-center text-stone-500 mb-12 text-sm">Same statistical accuracy. Fraction of the cost.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { name: "SPSS", price: "$99/mo", dim: true },
-                { name: "GraphPad Prism", price: "$255/yr", dim: true },
-                { name: "SAS", price: "$8,000+/yr", dim: true },
-                { name: "BioStatX", price: "Free", sub: "$9.99/mo Pro", highlight: true },
+                { name: "SPSS", price: "₩130,000/월", dim: true },
+                { name: "GraphPad Prism", price: "₩350,000/년", dim: true },
+                { name: "SAS", price: "₩10,000,000+/년", dim: true },
+                { name: "BioStatX", price: "무료", sub: "Pro ₩12,900/월", highlight: true },
               ].map((item) => (
                 <div key={item.name}
                   className={`glass-card p-6 text-center ${item.highlight ? "!border-orange-400/40 gradient-border" : ""} ${item.dim ? "opacity-60" : ""}`}>
