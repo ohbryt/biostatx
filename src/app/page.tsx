@@ -25,6 +25,8 @@ const tools = [
     icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" /></svg> },
   { title: "Curve Fitting", description: "Nonlinear regression with Levenberg-Marquardt. 9 models: dose-response, Michaelis-Menten, Hill, exponential, and more.", href: "/tools/curve-fitting", tag: "New", tagColor: "#f97316",
     icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg> },
+  { title: "RT-PCR ΔΔCt Analysis", description: "Relative quantification of gene expression using 2⁻ΔΔCt (Livak), Pfaffl, and 2⁻ΔCt methods with fold change visualization.", href: "/tools/rt-pcr", tag: "New", tagColor: "#f97316",
+    icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-1.338 4.016A2.25 2.25 0 0115.524 20H8.476a2.25 2.25 0 01-2.138-1.484L5 14.5m14 0H5" /></svg> },
 ];
 
 const universities = [
@@ -40,7 +42,7 @@ const capabilities = [
     title: "Statistical Analysis That Just Works",
     desc: "From t-tests to survival analysis — enter data, get publication-ready results instantly. No coding, no complex setup.",
     features: [
-      { label: "7 Statistical Tests", detail: "T-Test, ANOVA, Chi-Square, Correlation, Mann-Whitney, Sample Size, Survival" },
+      { label: "8 Statistical Tests", detail: "T-Test, ANOVA, Chi-Square, Correlation, Mann-Whitney, Sample Size, Survival, RT-PCR ΔΔCt" },
       { label: "Effect Sizes & CI", detail: "Cohen's d, eta-squared, Cramér's V with 95% confidence intervals" },
       { label: "Instant Results", detail: "Sub-second computation with p-values, test statistics, and interpretations" },
     ],
@@ -84,7 +86,7 @@ const faqs = [
   { q: "How accurate are the results compared to SPSS or Prism?", a: "BioStatX uses the same mathematical algorithms (Welch's t-test, Levenberg-Marquardt, etc.) as desktop software. Our statistics engine is validated against published datasets with 99.9% accuracy." },
   { q: "Can I use BioStatX results in my publication?", a: "Absolutely. All results include p-values, effect sizes, confidence intervals, and test statistics in formats ready for scientific papers. Charts export as high-resolution PNG (2x retina) or vector SVG." },
   { q: "Is my data secure?", a: "All computations run entirely in your browser — your data never leaves your device. We don't store, transmit, or access any research data. Zero server-side processing." },
-  { q: "What's the difference between Free and Pro?", a: "Free includes all 7 statistical tests and BioPlot with full customization. Pro adds advanced curve fitting models, priority support, batch analysis, and API access for $9.99/month." },
+  { q: "What's the difference between Free and Pro?", a: "Free includes all 8 statistical tests (including RT-PCR ΔΔCt) and BioPlot with full customization. Pro adds advanced curve fitting models, priority support, batch analysis, and API access for $9.99/month." },
   { q: "Do I need to install anything?", a: "No. BioStatX runs entirely in your web browser. No downloads, no Java, no Python environments. Works on any device — desktop, tablet, or mobile." },
 ];
 
