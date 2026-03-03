@@ -31,6 +31,9 @@ export default function Header() {
             <Link href="/tools/curve-fitting" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
               Curve Fit
             </Link>
+            <Link href="/tools/figure-gen" className="text-sm text-purple-600 font-medium hover:text-purple-700 transition-colors">
+              AI Figure
+            </Link>
             <Link href="/examples" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
               Examples
             </Link>
@@ -88,6 +91,7 @@ export default function Header() {
             <Link href="/#tools" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Tools</Link>
             <Link href="/tools/bioplot" className="block py-2 text-orange-600 font-medium hover:text-orange-700" onClick={() => setMenuOpen(false)}>BioPlot</Link>
             <Link href="/tools/curve-fitting" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Curve Fit</Link>
+            <Link href="/tools/figure-gen" className="block py-2 text-purple-600 font-medium hover:text-purple-700" onClick={() => setMenuOpen(false)}>AI Figure</Link>
             <Link href="/examples" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Examples</Link>
             <Link href="/pricing" className="block py-2 text-stone-600 hover:text-stone-900" onClick={() => setMenuOpen(false)}>Pricing</Link>
             <div className="border-t border-stone-200 pt-3 mt-2">
