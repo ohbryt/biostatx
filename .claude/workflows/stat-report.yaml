@@ -1,0 +1,126 @@
+name: Statistical Report Workflow
+description: >
+  Multi-step workflow for generating a decision-ready statistical report from raw data.
+  Validates data → runs appropriate statistical test(s) → generates figures →
+  produces a structured brief suitable for Notion or client delivery.
+  Designed for Korean biomedical researchers using biostatx tools.
+
+trigger: /report
+
+steps:
+  - name: data_validation
+    description: Inspect pasted or uploaded data for completeness, outliers, and distribution shape
+    prompt: |
+      You are running the data validation step of the BioStatX Statistical Report Workflow.
+
+      INPUT: Raw numerical data (tab-separated or CSV format, either pasted or from file).
+      TASK:
+      1. Parse the data and report: sample size (N), number of groups/variables, missing values.
+      2. Detect obvious outliers (values > 3 SD from mean) and flag them.
+      3. Assess normality via visual inspection (skewness/kurtosis if N > 30).
+      4. Recommend the most appropriate statistical test(s) given the data structure.
+
+      OUTPUT FORMAT (Markdown table in Notion-ready block):
+      | Check | Result |
+      |-------|--------|
+      | N | ... |
+      | Groups | ... |
+      | Missing | ... |
+      | Outliers | ... |
+      | Normality | ... |
+      | Recommended test | ... |
+
+      If data is ambiguous or insufficient, ask the user for clarification before proceeding.
+
+  - name: statistical_analysis
+    description: Execute statistical tests using jstat and statistics.ts helpers
+    prompt: |
+      You are running the statistical analysis step of the BioStatX Statistical Report Workflow.
+
+      PRECONDITION: Data validation is complete. You have the recommended test and data structure.
+
+      TASK:
+      1. Run the recommended statistical test(s) using the jstat library and helpers in /src/lib/statistics.ts.
+         - Import from '../../lib/statistics.ts' as needed
+         - Use jstat for p-values and distribution functions
+      2. For each test, report: test statistic, degrees of freedom, p-value, effect size (Cohen's d or η² as appropriate).
+      3. Interpret: significant vs. not significant at α = 0.05, with Korean-language plain-English summary.
+
+      OUTPUT FORMAT:
+      ## 분석 결과
+
+      | 지표 | 값 |
+      |------|-----|
+      | 검정 통계량 | ... |
+      | 자유도 | ... |
+      | p-value | ... |
+      | 효과 크기 | ... |
+      | 유의수준 | α = 0.05 |
+
+      **해석:** [Korean interpretation]
+
+      If the user has not provided data, stop here and ask for it.
+
+  - name: generate_figures
+    description: Produce publication-quality chart configurations using Recharts
+    prompt: |
+      You are running the figure generation step of the BioStatX Statistical Report Workflow.
+
+      PRECONDITION: Statistical analysis is complete. You have test results and the data structure.
+
+      TASK:
+      1. Select the most appropriate chart type for the completed analysis:
+         - t-test / ANOVA → boxplot or bar chart with error bars
+         - Correlation → scatter plot with regression line
+         - Survival → Kaplan-Meier curve
+         - Chi-square → stacked bar chart
+         - RT-PCR → grouped bar (ΔCt comparison)
+      2. Write a Recharts component snippet in React/TypeScript that the user can drop into their project.
+         - Use recharts v2.15 API (ResponsiveContainer, XAxis, YAxis, Tooltip, Legend)
+         - Include proper axis labels, title, and color scheme suitable for publication (colorblind-safe)
+         - Add PNG/SVG export button reference using chartUtils.ts patterns
+      3. Provide the exact import path and usage example.
+
+      OUTPUT FORMAT:
+      ## 추천 차트
+
+      **차트 유형:** [type]
+
+      ```tsx
+      // Paste full Recharts component here
+      ```
+
+      **사용법:**
+      ```tsx
+      import { ChartName } from '@/components/...';
+      // usage example
+      ```
+
+  - name: draft_brief
+    description: Assemble the final decision-ready brief in Notion-friendly Markdown
+    prompt: |
+      You are drafting the final brief for the BioStatX Statistical Report Workflow.
+
+      PRECONDITION: Data validation ✓ / Statistical analysis ✓ / Figures ready ✓
+
+      TASK:
+      Assemble a decision-ready brief that a Korean biomedical researcher can use immediately.
+      The brief should contain:
+
+      1. **Decision Question** — What question does this analysis answer?
+      2. **Data Summary** — N, groups, key descriptive stats (mean ± SD or median [IQR])
+      3. **Results** — Test name, statistic, p-value, effect size (table format)
+      4. **Interpretation** — Korean plain-English: what does this mean for the experiment?
+      5. **Figure** — Reference the chart from step 3 (describe, don't embed)
+      6. **Limitations** — Sample size, assumptions violated, confounders if any
+      7. **Next Action** — One concrete next step (follow-up experiment, confirmatory test, etc.)
+
+      OUTPUT FORMAT: Notion-friendly Markdown. Use tables, bold headers, bullet points.
+      Do NOT use emoji. Keep under 400 words. End with clear next action.
+
+      This brief is suitable for pasting directly into Notion or sharing as a client deliverable.
+
+---
+
+on_error: stop
+output_mode: brief
