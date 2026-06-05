@@ -71,11 +71,49 @@ npx vercel --prod ...   # Deploy (use token from BIOSTATX-PROJECT.md)
 ---
 
 ## Claude Code Dynamic Workflows
-Workflows live in `.claude/workflows/`. Run with `/report` or task-specific triggers.
+
+Workflows live in `.claude/workflows/`. Run with slash commands or task-specific triggers.
+
+### Available Workflows
 
 | Workflow | Trigger | What it does |
 |----------|---------|--------------|
 | `stat-report.yaml` | `/report` | Data → stats → figures → decision-ready brief |
+| `code-review.yaml` | `/review` | PR diff → inline review → approval/revision list |
+| `test-gen.yaml` | `/test` | Component/function → test cases → coverage report |
+| `deploy-check.yaml` | `/deploy` | Pre-deploy QA → build verify → Vercel deploy |
+
+### Quick Start
+
+```bash
+# Statistical report from raw data
+claude /report
+
+# Code review (after git diff)
+claude /review
+
+# Generate tests for a component
+claude /test src/components/MyChart.tsx
+
+# Pre-deploy verification
+claude /deploy
+```
+
+### Workflow Standards
+
+1. **Every PR** must run at least one workflow before merge
+2. **stat-report** is mandatory for any stats library changes
+3. **code-review** is mandatory for all PRs touching `src/lib/`
+4. **test-gen** is mandatory for new components in `src/components/`
+5. **deploy-check** is mandatory before any Vercel deployment
+
+### Adding New Workflows
+
+1. Create `.claude/workflows/<name>.yaml`
+2. Define `trigger:` (slash command name)
+3. Define `steps:` array with sequential prompts
+4. Test with `claude /<trigger>`
+5. Document in this table
 
 ---
 

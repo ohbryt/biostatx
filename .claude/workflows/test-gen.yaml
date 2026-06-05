@@ -1,0 +1,165 @@
+name: Test Generation Workflow
+description: >
+  Automatically generate Jest/Vitest test cases for BioStatX components and functions.
+  Analyzes source → identifies test scenarios → outputs test files with coverage report.
+  Mandatory for all new components in src/components/.
+
+trigger: /test
+
+steps:
+  - name: source_analysis
+    description: Analyze the target source file for testable units
+    prompt: |
+      You are running the source analysis step of the BioStatX Test Generation Workflow.
+
+      INPUT: File path provided with the /test command (e.g. `src/components/MyChart.tsx`)
+
+      TASK:
+      1. Read the target file completely
+      2. Identify all exported functions, components, and their signatures
+      3. For each exported item, identify:
+         - Parameters and their types
+         - Return type
+         - Edge cases (null, undefined, empty array, division by zero)
+         - Dependencies (jstat, supabase, recharts, etc.)
+      4. Determine test framework: Jest (default) or Vitest
+
+      OUTPUT FORMAT:
+      ## 테스트 가능 단위
+
+      | Name | Type | Params | Return | Edge Cases |
+      |------|------|--------|--------|-----------|
+      | myFunction | function | {a: number, b: string} | Promise<Result> | N=0, null input |
+      | MyComponent | component | {data: DataPoint[]} | JSX.Element | empty array, missing fields |
+
+  - name: unit_test_generation
+    description: Generate unit tests for identified functions
+    prompt: |
+      You are running the unit test generation step of the BioStatX Test Generation Workflow.
+
+      PRECONDITION: Source analysis complete. You have the list of testable units.
+
+      TASK:
+      1. For each function in `src/lib/`:
+         - Generate tests for: happy path, edge cases, error cases
+         - For `statistics.ts`: test against known statistical values
+           - t-test: verify p-value for known sample
+           - ANOVA: verify F-statistic calculation
+           - jstat API calls: verify correct method usage
+         - Mock external dependencies (jstat, supabase)
+      2. For utility functions:
+         - Test null/undefined handling
+         - Test type coercion edge cases
+         - Test boundary conditions
+
+      OUTPUT FORMAT:
+      ```typescript
+      // /tmp/biostatx/src/lib/__tests__/myFunction.test.ts
+      import { describe, it, expect, vi } from 'vitest';
+      // ... imports
+
+      describe('myFunction', () => {
+        it('should return correct result for valid input', () => {
+          // ...
+        });
+
+        it('should handle null input gracefully', () => {
+          // ...
+        });
+
+        it('should throw on invalid params', () => {
+          // ...
+        });
+      });
+      ```
+
+  - name: component_test_generation
+    description: Generate component tests for React components
+    prompt: |
+      You are running the component test generation step of the BioStatX Test Generation Workflow.
+
+      PRECONDITION: Source analysis complete. You have the list of React components.
+
+      TASK:
+      1. For each React component:
+         - Test render with valid props
+         - Test render with missing/empty props
+         - Test interaction (button clicks, form submissions)
+         - Test loading state
+         - Test error state
+         - For Recharts components: test with mock data
+      2. Use `@testing-library/react` for React components
+      3. Mock Recharts to avoid canvas rendering issues in tests
+
+      OUTPUT FORMAT:
+      ```typescript
+      // /tmp/biostatx/src/components/__tests__/MyChart.test.tsx
+      import { describe, it, expect, vi } from 'vitest';
+      import { render, screen } from '@testing-library/react';
+      import { MyChart } from '../MyChart';
+
+      vi.mock('recharts', () => ({
+        ResponsiveContainer: ({ children }: any) => children,
+        LineChart: ({ children }: any) => children,
+        Line: () => null,
+        XAxis: () => null,
+        YAxis: () => null,
+        Tooltip: () => null,
+      }));
+
+      describe('MyChart', () => {
+        it('should render with valid data', () => {
+          // ...
+        });
+
+        it('should handle empty data array', () => {
+          // ...
+        });
+      });
+      ```
+
+  - name: coverage_report
+    description: Generate coverage report and summarize test suite
+    prompt: |
+      You are running the coverage report step of the BioStatX Test Generation Workflow.
+
+      PRECONDITION: Unit and component tests generated.
+
+      TASK:
+      1. List all generated test files with their paths
+      2. Estimate coverage:
+         - Functions tested / total functions
+         - Components tested / total components
+         - Edge cases covered
+      3. Identify any untested paths that need manual review
+      4. Provide instructions for running tests
+
+      OUTPUT FORMAT:
+      ## 테스트 생성 결과
+
+      | 파일 | 테스트 수 | 커버 대상 |
+      |------|----------|-----------|
+      | src/lib/__tests__/myFunction.test.ts | 5 | myFunction |
+      | src/components/__tests__/MyChart.test.tsx | 4 | MyChart |
+
+      ## 예상 커버리지
+
+      - 함수: N/N (100%)
+      - 컴포넌트: N/N (100%)
+      - 엣지 케이스: N identified, N covered
+
+      ## 테스트 실행
+
+      ```bash
+      cd /Users/ocm/apps/biostatx
+      npm test
+      # or with coverage:
+      npm test -- --coverage
+      ```
+
+      ## 수동 검토 필요
+
+      - [ ] ... (untested edge cases)
+
+on_error: stop
+output_mode: brief

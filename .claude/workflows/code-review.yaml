@@ -1,0 +1,153 @@
+name: Code Review Workflow
+description: >
+  Comprehensive code review for BioStatX PRs.
+  Inspects git diff → provides inline review comments → outputs approval/revision list.
+  Mandatory for all changes to src/lib/ and src/components/.
+
+trigger: /review
+
+steps:
+  - name: diff_inspection
+    description: Fetch and parse the git diff for review
+    prompt: |
+      You are running the diff inspection step of the BioStatX Code Review Workflow.
+
+      TASK:
+      1. Run `git diff --stat` to get overview of changed files
+      2. Run `git diff` to get full diff content
+      3. For each changed file, identify:
+         - File type (component, lib, api, config)
+         - Lines changed (additions vs deletions)
+         - Potential risk areas (security, data handling, API calls)
+
+      OUTPUT FORMAT:
+      ## 변경 파일 개요
+
+      | 파일 | 변경량 | 유형 | 위험도 |
+      |------|--------|------|--------|
+      | ... | +N/-N | ... | High/Med/Low |
+
+  - name: security_review
+    description: Security audit of the diff
+    prompt: |
+      You are running the security review step of the BioStatX Code Review Workflow.
+
+      PRECONDITION: Diff inspection complete. You have the list of changed files.
+
+      TASK:
+      1. Check for hardcoded API keys, secrets, credentials → BLOCK immediately
+      2. Check for SQL injection risks in any query strings
+      3. Check for XSS risks in any user input rendering
+      4. Check for unsafe `eval()`, `innerHTML`, or `dangerouslySetInnerHTML`
+      5. Verify `.env` vars are used correctly (not hardcoded)
+
+      OUTPUT FORMAT:
+      ## 보안 감사 결과
+
+      | 항목 | 결과 | 파일:라인 |
+      |------|------|-----------|
+      | API 키 하드코딩 | Pass/Fail | ... |
+      | SQL 인젝션 | Pass/Fail | ... |
+      | XSS | Pass/Fail | ... |
+      | 위험한 함수 | Pass/Fail | ... |
+
+      If any Fail → STOP and report immediately.
+
+  - name: logic_review
+    description: Logic and correctness review
+    prompt: |
+      You are running the logic review step of the BioStatX Code Review Workflow.
+
+      PRECONDITION: Security review passed. You have the full diff.
+
+      TASK:
+      1. For `src/lib/statistics.ts` changes:
+         - Verify statistical formulas are correct
+         - Check edge cases (N=0, N=1, division by zero)
+         - Verify jstat API usage matches v1.9.6
+      2. For `src/components/` changes:
+         - Verify Recharts v2.15 API usage is correct
+         - Check for memory leaks (missing cleanup)
+         - Verify PNG/SVG export paths
+      3. For API route changes:
+         - Verify auth checks are present
+         - Check error handling is comprehensive
+      4. Flag any TypeScript `any` types in function params
+
+      OUTPUT FORMAT:
+      ## 로직 감사 결과
+
+      | 파일 | 이슈 | 심각도 | 권장 수정 |
+      |------|------|--------|-----------|
+      | ... | ... | High/Med/Low | ... |
+
+  - name: standards_compliance
+    description: BioStatX coding standards compliance check
+    prompt: |
+      You are running the standards compliance step of the BioStatX Code Review Workflow.
+
+      PRECONDITION: Logic review complete.
+
+      TASK:
+      Check the diff against BioStatX standards:
+      1. Stats are browser-side (no server-side computation without justification)
+      2. No `console.log` in production code
+      3. `.env.local.example` updated if new env vars added
+      4. New components have TypeScript interfaces defined
+      5. Recharts components use ResponsiveContainer
+      6. All chart components support PNG + SVG export
+
+      OUTPUT FORMAT:
+      ## 표준 준수 결과
+
+      | 표준 | 준수 여부 | 비 준수 항목 |
+      |------|----------|-------------|
+      | Browser-side stats | Yes/No | ... |
+      | No console.log | Yes/No | ... |
+      | Env vars documented | Yes/No | ... |
+      | TypeScript interfaces | Yes/No | ... |
+      | Recharts patterns | Yes/No | ... |
+      | Export support | Yes/No | ... |
+
+  - name: review_summary
+    description: Assemble final review summary with approval decision
+    prompt: |
+      You are drafting the final review summary for the BioStatX Code Review Workflow.
+
+      PRECONDITION: All review steps complete.
+
+      TASK:
+      Assemble a final review summary with:
+      1. **Overall verdict** — APPROVED / REVISION NEEDED / BLOCKED
+      2. **Critical issues** — Must fix before merge (Security, correctness)
+      3. **Minor issues** — Should fix before merge (Style, standards)
+      4. **Suggestions** — Optional improvements
+      5. **Approved files** — Files that passed all checks
+      6. **Files needing revision** — Files with issues
+
+      OUTPUT FORMAT:
+      ## 최종 리뷰 결과
+
+      ** verdict: APPROVED / REVISION NEEDED / BLOCKED **
+
+      ### critical issues (must fix)
+      - [ ] ...
+
+      ### minor issues (should fix)
+      - [ ] ...
+
+      ### suggestions (optional)
+      - [ ] ...
+
+      ### approved files
+      - [ ] ...
+
+      ### files needing revision
+      - [ ] ...
+
+      If BLOCKED → Do not merge. Fix critical issues and re-run `/review`.
+      If REVISION NEEDED → Address minor issues before merge.
+      If APPROVED → Safe to merge.
+
+on_error: stop
+output_mode: brief

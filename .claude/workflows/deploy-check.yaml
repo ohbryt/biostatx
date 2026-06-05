@@ -1,0 +1,153 @@
+name: Pre-Deploy QA Workflow
+description: >
+  Pre-deployment quality assurance checklist for BioStatX.
+  Verifies build, env vars, broken links, and Vercel deployment readiness.
+  Mandatory before any Vercel deployment.
+
+trigger: /deploy
+
+steps:
+  - name: build_verification
+    description: Run production build and verify success
+    prompt: |
+      You are running the build verification step of the BioStatX Pre-Deploy QA Workflow.
+
+      TASK:
+      1. Run `npm run build` in the biostatx project directory
+      2. Verify exit code is 0
+      3. Check for any TypeScript errors (ERROR level — ignore warnings)
+      4. Check for any missing return statements in Next.js route handlers
+      5. Verify the `.next/` output directory is created
+
+      OUTPUT FORMAT:
+      ## 빌드 결과
+
+      | 항목 | 결과 |
+      |------|------|
+      | 빌드 성공 | Yes/No |
+      | TypeScript 에러 | 0 / N |
+      | 빌드 출력 | .next/ exists / missing |
+
+      If build fails → Do not deploy. Fix errors first.
+
+  - name: env_var_audit
+    description: Verify all required environment variables are set
+    prompt: |
+      You are running the env var audit step of the BioStatX Pre-Deploy QA Workflow.
+
+      TASK:
+      1. Read `.env.local.example` to get list of required env vars
+      2. Check which ones are set in `.env.local` (if it exists)
+      3. Verify critical env vars are present:
+         - `NEXT_PUBLIC_SUPABASE_URL`
+         - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+         - `PORTONE_STORE_ID` (if payments enabled)
+         - `PORTONE_CHANNEL_KEY` (if payments enabled)
+         - `OPENAI_API_KEY` (if AI figures enabled)
+      4. Flag any missing required vars
+
+      OUTPUT FORMAT:
+      ## 환경 변수 감사
+
+      | 변수 | 필수 | 현재 상태 |
+      |------|------|-----------|
+      | NEXT_PUBLIC_SUPABASE_URL | Yes | Set / Missing |
+      | NEXT_PUBLIC_SUPABASE_ANON_KEY | Yes | Set / Missing |
+      | PORTONE_STORE_ID | If payments | Set / Missing |
+      | PORTONE_CHANNEL_KEY | If payments | Set / Missing |
+      | OPENAI_API_KEY | If AI figures | Set / Missing |
+
+      If any required var is missing → Do not deploy. Add to Vercel env vars first.
+
+  - name: dependency_audit
+    description: Check for outdated or vulnerable dependencies
+    prompt: |
+      You are running the dependency audit step of the BioStatX Pre-Deploy QA Workflow.
+
+      TASK:
+      1. Run `npm audit --audit-level=high` to check for high-severity vulnerabilities
+      2. Run `npm outdated` to check for outdated packages
+      3. Flag any high-severity vulnerabilities
+      4. Check if critical packages are outdated:
+         - Next.js (current: 15.x)
+         - React (current: 19.x)
+         - jstat (current: 1.9.6)
+         - Recharts (current: 2.15.x)
+
+      OUTPUT FORMAT:
+      ## 의존성 감사
+
+      | 항목 | 결과 |
+      |------|------|
+      | 취약점 (HIGH+) | 0 / N — names: ... |
+      | outdated 패키지 | 0 / N — names: ... |
+      | Next.js 최신 | Yes/No (current: N) |
+      | React 최신 | Yes/No (current: N) |
+
+      If HIGH+ vulnerabilities found → Do not deploy. Run `npm audit fix` first.
+
+  - name: broken_link_scan
+    description: Scan for broken internal links and references
+    prompt: |
+      You are running the broken link scan step of the BioStatX Pre-Deploy QA Workflow.
+
+      TASK:
+      1. Check all `href` attributes in Next.js Link components
+      2. Verify all API route paths in `src/app/api/` are consistent
+      3. Check for any hardcoded URLs that should be environment variables
+      4. Verify `next.config.ts` has correct redirects/rewrites if any
+
+      OUTPUT FORMAT:
+      ## 링크 스캔 결과
+
+      | 유형 |发现问题 |
+      |------|--------|
+      | 내부 링크 | Pass / N broken |
+      | API 경로 | Pass / N inconsistent |
+      | 하드코딩 URL | Pass / N found |
+      | next.config | Pass / Needs review |
+
+  - name: deploy_readiness
+    description: Final deploy readiness summary
+    prompt: |
+      You are running the final deploy readiness step of the BioStatX Pre-Deploy QA Workflow.
+
+      PRECONDITION: All checks complete.
+
+      TASK:
+      Assemble a final deploy readiness summary:
+
+      1. **Build** — Pass/Fail
+      2. **Env Vars** — All set / N missing
+      3. **Dependencies** — Clean / N issues
+      4. **Links** — Clean / N issues
+
+      Overall verdict:
+      - **READY TO DEPLOY** — All checks passed
+      - **DELAYED** — Fix N issues before deploying
+
+      If READY → Proceed with Vercel deployment:
+      ```bash
+      cd /Users/ocm/apps/biostatx
+      npx vercel --prod
+      ```
+
+      If DELAYED → List the specific issues to fix.
+
+      OUTPUT FORMAT:
+      ## 최종 배포 준비 상태
+
+      | 체크 항목 | 결과 |
+      |----------|------|
+      | 빌드 | ✅ Pass / ❌ Fail |
+      | 환경 변수 | ✅ All set / ❌ N missing |
+      | 의존성 | ✅ Clean / ❌ N issues |
+      | 링크 | ✅ Clean / ❌ N issues |
+
+      ** verdict: READY TO DEPLOY / DELAYED **
+
+      ### fixes needed
+      - [ ] ...
+
+on_error: stop
+output_mode: brief
